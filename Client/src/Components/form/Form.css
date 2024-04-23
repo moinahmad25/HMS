@@ -1,0 +1,63 @@
+.form {
+    font-family: 'Poppins';
+    color: #e9eaf4;
+}
+
+.form h1 {
+    font-family: Poppins;
+    color: #e9eaf4;
+}
+
+.default {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    background: rgb(4, 16, 35);
+    border: 1px solid #232857c3;
+    color: rgb(66, 116, 234);
+}
+
+.completed {
+    background: #4155b6;
+    color: rgb(255, 255, 255);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+}
+
+.active {
+    background: rgb(7, 49, 91);
+    color: white;
+}
+
+.line {
+    width: 50%;
+    height: 5px;
+    background: rgba(2, 68, 119, 0.456);
+    z-index: -0;
+    border: 1px solid #232857b4;
+}
+
+.line2 {
+    width: 70%;
+    height: 5px;
+    background: rgb(255, 255, 255);
+    position: absolute;
+    top: 50%;
+    right: -70%;
+    transition: all .2s ease-in-out;
+    z-index: -10;
+}
+
+.regInput {
+    padding: 0 1rem;
+}
+
+.regInput::-webkit-outer-spin-button,
+.regInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    -moz-appearance: textfield;
+}
+
+.submitBtn:hover {
+    background: #005eff8c;
+}

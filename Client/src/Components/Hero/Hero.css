@@ -1,0 +1,74 @@
+@font-face {
+    font-family: HeroFont;
+    src: url(/Mercado.ttf);
+}
+@font-face {
+    font-family: hindiFont;
+    src: url(/Alkatra-VariableFont_wght.ttf);
+}
+
+.cover {
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.117);
+}
+
+.main_child_1 {
+    /* clip-path: polygon(100% 0, 100% 51%, 100% 100%, 51% 100%, 60% 51%, 55% 0); */
+    clip-path: ellipse(28% 100% at 81% 50%);
+    background: white;
+}
+
+.list li {
+    letter-spacing: 1.6px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    padding: 0.8rem 1.2rem;
+    border-radius: 4rem;
+    position: relative;
+    color: rgb(95, 95, 95);
+    transition: all .2s ease;
+}
+
+.list li::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    transition: all .2s ease;
+    background: rgb(22, 22, 22);
+}
+
+.list li:hover {
+    color: rgb(22, 22, 22);
+}
+
+.list li:hover::before {
+    width: 100%;
+}
+
+.hero_heading {
+    line-height: 6.8rem;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: HeroFont;
+    text-align: center;
+
+}
+
+.hero_heading span {
+    font-family: hindiFont;
+    margin-left: 6rem;
+    margin-top: 0.4rem;
+}
+
+.join {
+    transform: skew(-10deg);
+    transition: transform .2s ease-in;
+}
+
+button:hover {
+    transform: skew(0);
+}

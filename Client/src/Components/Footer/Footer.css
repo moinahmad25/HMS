@@ -1,0 +1,28 @@
+.dot-mask {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    background-image: radial-gradient(#acacac 1px, transparent 1px);
+    background-size: 16px 16px;
+    -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%,
+            #000 60%,
+            transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 50% at 50% 50%,
+            #000 60%,
+            transparent 100%);
+}
+
+.hero_heading {
+    line-height: 6rem;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: HeroFont;
+    margin-left: -3rem;
+
+}
+
+.hero_heading span {
+    font-family: hindiFont;
+    /* margin-left: 4rem; */
+}

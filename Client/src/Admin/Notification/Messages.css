@@ -1,0 +1,6 @@
+.inbox{
+    transition: all .2s ease;
+}
+.inbox:hover{
+    background: rgb(215, 215, 215);
+}

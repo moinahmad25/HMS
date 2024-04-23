@@ -1,0 +1,34 @@
+/* @font-face {
+    font-family: headingFont;
+    src: url(/QUIGLEYW.TTF);
+} */
+@font-face {
+    font-family: headingFont;
+    src: url(/Nunito-VariableFont_wght.ttf);
+}
+
+
+
+@font-face {
+    font-family: paraFont;
+    src: url(/Nunito-VariableFont_wght.ttf);
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: headingFont;
+}
+
+p,
+span,
+a,
+li,
+button,
+input {
+    font-family: paraFont;
+}

@@ -1,0 +1,45 @@
+.scroll {
+    animation: scrollUnlimited 19s linear infinite;
+    width: 200%;
+}
+
+@keyframes scrollUnlimited {
+    from {
+        transform: translateX(0%);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.imgGrp {
+    width: clamp(10rem, 1rem + 40vmin, 30rem);
+    padding: calc(clamp(10rem, 1rem + 30vmin, 30rem) / 10);
+}
+
+.marquee {
+    position: relative;
+}
+
+.marquee::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 15rem;
+    height: 100%;
+    background: linear-gradient(to right, rgb(255, 255, 255), transparent);
+    z-index: 50;
+}
+
+.marquee::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 15rem;
+    height: 100%;
+    background: linear-gradient(to left, rgb(255, 255, 255), transparent);
+    z-index: 50;
+}

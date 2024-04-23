@@ -1,0 +1,51 @@
+Tasks left:
+
+Now, I will start to intialize the main functionality of this web app,
+
+\\ ON USER SIDE
+
+task 1: uploading the reciept or UTR no. verification
+task 2: after verifying the UTR no. there will be options for room booking
+task 3: In the room booking section, there will be option for selecting the hostel like, Bhabha, G2, Abdul Kalam etc.
+task 4: after selecting one of these options, we will move forward to the main section of selecting the rooms
+	here, we can see the room availability, booking option etc easily. means we can see which room is booked and which is not.
+task 5: we can select only one room but there also be an second preference for room, where we give the one other room booking if 1st room is occupied by someone.
+after this, we will provide a button where the student can apply to book the room.
+
+
+
+***Affects of this button:::
+\\ ON ADMIN SIDE
+
+	after the button clicked by user for room booking, we will make it isPending value to true and isBooked value false, and after the booking confirm by the admin, the isPending value will set to false and isBooked value set to true and also we will add the room no. value as per the user choose.
+	By any chance if both room will occupied by someone, we will cancel the isBooking to false and isPending to false and also arise a new field of isCancel to true, this will help the user to re-book the room.
+
+
+
+problems::: 
+
+we have to add some fields to the ADMIN side like for:
+-gender
+-sem
+-course
+
+
+we have to add some fields to the USER side like for:
+-isPending
+-isBooked
+-roomNumber
+-isFeePayed (for fee confirmation)
+
+
+and also have to modify the models of DB according to this
+
+
+
+
+for gate-pass ui::::
+
+-name
+-branch/sem
+-registration
+-date(date of going)
+-why?(purpose)
