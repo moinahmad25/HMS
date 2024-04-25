@@ -11,15 +11,29 @@ const Messages = () => {
   const [message, setMessage] = useState([]);
   const [click, setClick] = useState(false)
   const [user, setUser] = useState({
-    userName:'',
-    userEmail:'',
-    hostelName:'',
-    floorNumber:'',
-    roomNumber:'',
-    userType:'',
-    registrationNumber:'',
-    imgURL:''
+    userName: '',
+    userEmail: '',
+    hostelName: '',
+    floorNumber: '',
+    roomNumber: '',
+    userType: '',
+    registrationNumber: '',
+    imgURL: ''
   })
+
+  const [passUser, setPassUser] = useState({
+    registrationNumber: '',
+    userName: '',
+    userEmail: '',
+    roomNumber: '',
+    hostelName: '',
+    floorNumber: '',
+    purpose: '',
+    date: '',
+    userType: ''
+  })
+
+  const [gatePassMessage, setGatePassMessage] = useState([])
 
   const [receiptURL, setReceiptURL] = useState(null)
   const [isZoom, setIsZoom] = useState(false)
@@ -29,7 +43,7 @@ const Messages = () => {
     try {
       const response = await fetch(`http://localhost:5000/api/admin/get-room-allocation-detail`)
       const result = await response.json();
-      // console.log(result)
+      console.log(result)
 
       setMessage(result.user)
 
@@ -39,18 +53,24 @@ const Messages = () => {
   }
 
 
-  useEffect(() => {
+  const getGatePass = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/admin/gate-pass-request`)
+      const result = await response.json();
 
+      // console.log(result)
+      setGatePassMessage(result.user)
+    } catch (error) {
+      console.log("error found in gate pass getting", error)
+    }
+  }
+
+
+  useEffect(() => {
     getMessage()
+    getGatePass()
 
   }, [])
-
-
-  // useEffect(() => {
-
-  //   getMessage()
-
-  // }, [message])
 
 
   const handleClick = (index) => {
@@ -62,35 +82,38 @@ const Messages = () => {
       hostelName: detail.hostelName,
       floorNumber: detail.floorNumber,
       roomNumber: detail.roomNumber,
-      userType: 'Room Booking', 
+      userType: 'Room Booking',
       registrationNumber: detail.registrationNumber,
       imgURL: detail.imgURL,
     })
   }
 
+  const handleClickGatePass = (index) => {
+    setClick(true)
+    const userInfo = gatePassMessage[index];
+    console.log(userInfo)
+    setPassUser({
+      registrationNumber: userInfo.registrationNumber,
+      userName: userInfo.userName,
+      userEmail: userInfo.userEmail,
+      roomNumber: userInfo.roomNumber,
+      hostelName: userInfo.hostelName,
+      floorNumber: userInfo.floorNumber,
+      purpose: userInfo.purpose,
+      date: userInfo.date,
+      userType: userInfo.userType
+    })
+  }
+
 
   const handleConfirm = async () => {
-    // try {
-    //   const response = await fetch(`http://localhost:5000/api/admin/allocate-room/${user.registrationNumber}`,
-    //     {
-    //       method: 'POST'
-    //     })
-
-    //   const result = await response.json();
-    //   console.log("confirm!!!", result)
-    //   setClick(false)
-
-    // } catch (error) {
-    //   console.log("cancel!!!", error)
-    // }
-
     await sendConfirmation();
   }
 
   const sendConfirmation = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/booking-confirmation/${user.registrationNumber}`,{
-        method:'POST',
+      const response = await fetch(`http://localhost:5000/api/admin/booking-confirmation/${user.registrationNumber}`, {
+        method: 'POST',
       })
 
       const result = await response.json();
@@ -106,7 +129,7 @@ const Messages = () => {
   const handleCancellation = async () => {
     try {
       const response = await fetch(`http://localhost:5000/api/admin/cancel-booking/${user.registrationNumber}`, {
-        method:'POST'
+        method: 'POST'
       })
 
       const result = await response.json();
@@ -131,6 +154,37 @@ const Messages = () => {
     setIsZoom(false)
   }
 
+
+  const handleAllow = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/admin/gate-pass-confirmation/${passUser.registrationNumber}`, {
+        method: 'POST'
+      })
+
+      const result = await response.json();
+      console.log(result)
+
+      setClick(false)
+
+    } catch (error) {
+      console.log("error to confirm gate pass", error)
+    }
+  }
+
+  const handleNotAllow = async () => {
+
+  }
+
+  const renderMessageItems = (items, handleClickFn) => {
+    return items.map((item, index) => (
+      <div className='w-full flex text-zinc-500 cursor-pointer inbox rounded-md py-2 bor' key={index + 1} onClick={() => handleClickFn(index)}>
+        <div className='w-1/5 h-8 flex items-center pl-4 font-medium '>{item.userName}</div>
+        <div className='w-1/5 h-8 flex items-center pl-4'>{item.userType || 'Room Booking'}</div>
+        <div className='w-3/5 h-8 flex items-center pl-4'>{item.userType ? `Gate Pass Pending!!! of room no. ${item.roomNumber} in ${item.hostelName}` : `Booking Pending!!! of Room no. ${item.roomNumber} on ${item.floorNumber} floor in ${item.hostelName}`}</div>
+      </div>
+    ));
+  };
+
   return (
     <div className='w-full min-h-screen flex'>
       <Navbar />
@@ -153,21 +207,47 @@ const Messages = () => {
                     <p className='font-semibold text-[1rem] absolute -left-4 top-0 bg-red-600 text-red-50 rounded-md px-2 z-50'>Fee receipt</p>
                     <img src={user.imgURL} alt="receipt" className=' brightness-[40%] w-full h-full rounded-md object-cover object-top' onClick={zoomReceipt} />
                     <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-transparent border-2 border-dashed border-zinc-300 font-semibold flex justify-center items-center text-zinc-300 py-1 px-4 rounded-md' onClick={() => setIsZoom(true)}>Click To Zoom</div>
-                  </div> : 
+                  </div> :
                     <div className='w-1/2 h-[40vh] rounded-md flex justify-center items-center mt-4 cursor-pointer relative bg-zinc-200'>
                       <p className='font-semibold text-[1rem] absolute -left-4 top-0 bg-red-600 text-red-50 rounded-md px-2 z-50'>Fee receipt</p>
                       <img src={not_found} alt="receipt" className='blur-[2px] w-[15rem] h-[15rem] rounded-md object-contain object-center' />
                       <p className='text-red-600 text-[11rem] absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2'>?</p>
                       <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-transparent border-2 border-dashed border-zinc-600 font-semibold flex justify-center items-center text-zinc-600 py-1 px-4 rounded-md text-nowrap'>Fee Receipt Missing!!!</p>
-                  </div>
+                    </div>
                 }
-                
+
                 <div className='w-full h-[3rem] my-8 flex gap-4'>
-                    <button className='w-1/2 h-full rounded-md bg-red-100 border border-red-200 font-semibold text-red-500' onClick={handleCancellation}>Cancel Booking</button>
+                  <button className='w-1/2 h-full rounded-md bg-red-100 border border-red-200 font-semibold text-red-500' onClick={handleCancellation}>Cancel Booking</button>
                   <button className='w-1/2 h-full rounded-md bg-green-100 border border-green-200 font-semibold text-green-500' onClick={handleConfirm}>Confirm Booking</button>
                 </div>
               </div>
-            </div>:<></>
+            </div> : <></>
+          }
+          {
+            click && passUser.userName ? <div className='w-[45vw] min-h-[60vh] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white shadow-2xl shadow-black rounded-md p-4'>
+              <MdCancel className='absolute text-[2rem] cursor-pointer text-zinc-600 -top-4 -right-4 bg-white rounded-full' onClick={handleCancel} />
+              <div className='w-full h-full border border-zinc-200 rounded-md px-8 pt-10'>
+                <h1 className='text-[1.6rem] font-semibold'>{passUser.userName}</h1>
+                <div className='text-[0.9rem] h-[1rem] font-normal text-zinc-400 flex gap-2 items-center'>
+                  <MdEmail />
+                  <p>{passUser.userEmail}</p>
+                </div>
+                <h3 className='text-[1rem] font-semibold my-4'>Subject: <span className='font-medium text-green-500'>{passUser.userType}</span></h3>
+                <p className='text-zinc-500'>Hello Admin, I want a {passUser.userType}. My room number is<span className='font-semibold text-black'> {passUser.roomNumber} </span> in <span className='uppercase font-semibold text-black'> {passUser.hostelName}. </span> </p>
+                {
+                  passUser.purpose ? <div className='w-full py-4 flex flex-col gap-2'>
+                    <h3 className='text-[1.1rem] font-semibold text-red-500'>Purpose: <span className='font-medium text-[1.1rem] text-zinc-400 capitalize'>{passUser.purpose}</span></h3>
+                    <h3 className='text-[1.1rem] font-semibold text-red-500'>Date of going: <span className='font-medium text-[1.1rem] text-zinc-400 capitalize'>{passUser.date}</span></h3>
+
+                  </div> : <></>
+                }
+
+                <div className='w-full h-[3rem] my-8 flex gap-4'>
+                  <button className='w-1/2 h-full rounded-md bg-red-100 border border-red-200 font-semibold text-red-500' onClick={handleNotAllow}>Decline</button>
+                  <button className='w-1/2 h-full rounded-md bg-green-100 border border-green-200 font-semibold text-green-500' onClick={handleAllow}>Allow</button>
+                </div>
+              </div>
+            </div> : <></>
           }
           {
             isZoom ? <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[96vh] shadow-2xl shadow-black rounded-md bg-white p-4'>
@@ -187,21 +267,18 @@ const Messages = () => {
                 <h1 className='font-bold text-gray-900'>Message</h1>
               </div>
             </div>
-            {
-              message.length > 0 ? message.map((item, index) => {
-                return (
-                  <div className='w-full flex text-zinc-500 cursor-pointer inbox rounded-md py-2 bor' key={index + 1} onClick={() => handleClick(index)}>
-                    <div className='w-1/5 h-8 flex items-center pl-4 font-medium '>{item.userName}</div>
-                    <div className='w-1/5 h-8 flex items-center pl-4'>Room Booking</div>
-                    <div className='w-3/5 h-8 flex items-center pl-4'>Booking Pending!!! of Room no. <span className='font-semibold mx-1'> {item.roomNumber} </span> on <span className='font-semibold mx-1'> {item.floorNumber} floor </span> in <span className='font-semibold mx-1'> {item.hostelName} </span></div>
-                  </div>
-                )
-              }) : <div className='w-full p-4 flex flex-col justify-center items-center h-[60vh]'>
+            {(message.length > 0 || gatePassMessage.length > 0) ? (
+              <div className='w-full'>
+                {message.length > 0 && renderMessageItems(message, handleClick)}
+                {gatePassMessage.length > 0 && renderMessageItems(gatePassMessage, handleClickGatePass)}
+              </div>
+            ) : (
+              <div className='w-full p-4 flex flex-col justify-center items-center h-[60vh]'>
                 <img src={message_illustration} alt='edit illustration' className='h-[15rem]' />
                 <h1 className='text-[1.5rem] font-semibold mt-4'>Nothing in message box yet!</h1>
                 <p className='text-[0.9rem] text-zinc-500 font-medium'>If you think there should be a message, then refresh it.</p>
               </div>
-            }
+            )}
 
           </div>
         </div>

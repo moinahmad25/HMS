@@ -4,6 +4,7 @@ const AddModel = require("../models/addSchema"); // DB model, storing the detail
 const Room = require("../models/pendingBookingSchema");
 const nodemailer = require("nodemailer");
 const ConfirmBooking = require("../models/confirmBooking");
+const AllocatedStudent = require("../models/allocated");
 
 const pendingController = async (req, res) => {
   const { registrationNumber } = req.params;
@@ -86,6 +87,7 @@ const bookingConfirmation = async (req, res) => {
 
   try {
     const isUserExist = await Room.findOne({ registrationNumber });
+    console.log(isUserExist);
     if (isUserExist) {
       // creating transporter for sending the mail to the user.
       const transporter = nodemailer.createTransport(config);
@@ -142,11 +144,13 @@ const bookingConfirmation = async (req, res) => {
 
       if (isUserExist.imgURL !== "") {
         const { roomNumber, hostelName } = isUserExist;
-        const updatedRoom = await Room.findByIdAndUpdate(
-          isUserExist._id, // Use the document ID for update
+        const updatedRoom = await Room.updateOne(
+          { registrationNumber }, // Use the document ID for update
           { isAllocated: true },
           { new: true }
         );
+
+        console.log("updated Room", updatedRoom);
 
         const pushToBookedRooms = await ConfirmBooking.findOneAndUpdate(
           { hostelName },
@@ -154,7 +158,18 @@ const bookingConfirmation = async (req, res) => {
           { new: true, upsert: true }
         );
 
+        console.log("pushing to booked room", pushToBookedRooms);
+        // sending all allocated student to a separate collection
+        const room = await Room.find({registrationNumber, isAllocated: true });
+
+        const sendTo = await AllocatedStudent.insertMany(room);
+
+        console.log("rooms", room);
+        console.log("allocated student", sendTo);
+
+        // after all these, we will send the message to the student
         await transporter.sendMail(message);
+
         return res.status(201).json({
           status: "confirmed!!!",
           message: "You will get the message soon.",
@@ -228,7 +243,7 @@ const bookingConfirmation = async (req, res) => {
 `,
         };
 
-        transporter.sendMail(message);
+        await transporter.sendMail(message);
 
         return res.status(400).json({
           status: "failed!!!",
@@ -242,9 +257,28 @@ const bookingConfirmation = async (req, res) => {
         .json({ status: "Failed!!!", message: "User does not exist." });
     }
   } catch (error) {
-    return res
-      .status(400)
-      .json({ status: "Failed!!!", message: "There is something wrong!!!" });
+    if (error.code === 11000 && error.keyPattern && error.keyPattern._id) {
+      // Handle duplicate _id error
+      console.error("Duplicate _id error:", error);
+      // Generate a new unique _id and retry insertion
+      const newDocument = new AllocatedStudent({
+        /* new document data */
+      });
+      await newDocument.save(); // Example: Save the new document
+      return res.status(500).json({
+        status: "Failed!!!",
+        message: "Duplicate key error, retrying with a new _id.",
+        error: error.message,
+      });
+    } else {
+      // Handle other errors
+      console.error("Error in bookingConfirmation:", error);
+      return res.status(400).json({
+        status: "Failed!!!",
+        message: "There is something wrong!!!",
+        error: error.message, // Include the error message in the response for debugging
+      });
+    }
   }
 };
 

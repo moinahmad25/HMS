@@ -6,3 +6,15 @@
 .bg_filter{
     filter: blur(1px) brightness(70%);
 }
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) hue-rotate(180deg);
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    /* Change the icon color */
+}
+.btnApply:hover{
+    background: rgb(225, 225, 225);
+    color: #262044;
+    border: '1px solid white';
+}

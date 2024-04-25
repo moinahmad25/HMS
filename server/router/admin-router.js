@@ -11,7 +11,10 @@ const {
   bookingConfirmation,
   bookingCancel,
 } = require("../controllers/pending-controller");
-
+const {
+  gatePassAllowance,
+  getRequest,
+} = require("../controllers/gate-pass-controller");
 
 // defining admin route
 adminRouter.route("/add").post(register);
@@ -20,7 +23,14 @@ adminRouter.route("/update-detail/:registrationNumber").patch(updateDetail);
 adminRouter.route("/:registrationNumber").delete(deleteDetail);
 adminRouter.route("/get-room-allocation-detail").get(getRoomDetail);
 // adminRouter.route("/allocate-room/:registrationNumber").post(allocateRoom);
-adminRouter.route("/booking-confirmation/:registrationNumber").post(bookingConfirmation);
+adminRouter
+  .route("/booking-confirmation/:registrationNumber")
+  .post(bookingConfirmation);
 adminRouter.route("/cancel-booking/:registrationNumber").post(bookingCancel);
+adminRouter
+  .route("/gate-pass-confirmation/:registrationNumber")
+  .post(gatePassAllowance);
+
+adminRouter.route("/gate-pass-request").get(getRequest)
 
 module.exports = adminRouter;

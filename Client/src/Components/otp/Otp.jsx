@@ -23,7 +23,7 @@ const Otp = () => {
 
 
                 // mixing the email with star
-                const email = result.email;
+                const email = result.isRegistrationValid.email;
                 let protectedEmail = "";
 
                 for (let i = 0; i < email.length; i++) {
