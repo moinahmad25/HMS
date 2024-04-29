@@ -5,6 +5,7 @@ const {
   updateDetail,
   deleteDetail,
   getRoomDetail,
+  getStudentDetails,
 } = require("../controllers/admin-controller");
 const { getDetail } = require("../controllers/student-controller");
 const {
@@ -32,5 +33,8 @@ adminRouter
   .post(gatePassAllowance);
 
 adminRouter.route("/gate-pass-request").get(getRequest)
+
+// getting students info:
+adminRouter.route('/total-students').get(getStudentDetails)
 
 module.exports = adminRouter;

@@ -1,9 +1,3 @@
-.inbox{
-    transition: all .2s ease;
-}
-.inbox:hover{
-    background: rgb(241, 241, 241);
-}
 /* Add this to your CSS file */
 .blur-effect {
     filter: blur(4px);

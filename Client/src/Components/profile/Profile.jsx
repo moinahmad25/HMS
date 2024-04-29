@@ -60,9 +60,7 @@ const Profile = () => {
     message: ''
   })
 
-  // const [dateState, setGatePass] = useState('')
-
-  // const [purpose, setPurpose] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const [gatePass, setGatePass] = useState({
     date: '',
@@ -95,25 +93,7 @@ const Profile = () => {
     const gettingDetail = async () => {
       const response = await fetch(`http://localhost:5000/api/form/${id}`)
       const result = await response.json();
-
-      // setting user's room and hostel if they got allocated
-      // setIsAllowed(result.isUserApplied.isAllocated)
       console.log(result)
-
-      // if (result.isUserApplied.isAllocated) {
-      //   setRoomDetail({
-      //     roomNumber: result.isUserApplied.roomNumber,
-      //     hostelName: result.isUserApplied.hostelName
-      //   })
-      // }
-      // else {
-      //   setRoomDetail({
-      //     roomNumber: 'Not Selected',
-      //     hostelName: 'Not Selected'
-      //   })
-      // }
-
-
 
       setVerified(result.isRegistrationValid.isVerified)
       setUser({
@@ -244,6 +224,7 @@ const Profile = () => {
 
   const handleRoomSubmit = async () => {
     setIsHostelBtnClicked(false)
+    setLoading(true)
 
     try {
       const response = await fetch(`http://localhost:5000/api/user/${id}/pending-room-booking`, {
@@ -284,6 +265,9 @@ const Profile = () => {
     } catch (error) {
       console.log("error", error)
       // clg(error.message)
+    }
+    finally{
+      setLoading(false)
     }
   }
 
@@ -328,6 +312,8 @@ const Profile = () => {
 
 
   const handleUpload = async () => {
+
+    setLoading(true)
     const formData = new FormData();
     formData.append('receipt', receipt[0])
 
@@ -359,11 +345,15 @@ const Profile = () => {
     } catch (error) {
       console.error('Error uploading image:', error);
     }
+    finally{
+      setLoading(false)
+    }
   }
 
   // gate pass functionality
 
   const handleGatePassClick = async () => {
+    setLoading(true)
     try {
       const response = await fetch(`http://localhost:5000/api/form/apply-gate-pass/${id}`,
         {
@@ -398,14 +388,31 @@ const Profile = () => {
         }
         console.log(result)
 
+        setIsPassBtnClicked(false)
+
     } catch (error) {
       console.log("error found in gate pass", error)
+    }
+    finally{
+      setLoading(false)
     }
   }
 
 
   return (
     <div className='w-full min-h-screen flex justify-center gap-6 item-center p-8 ' >
+      {
+        loading && (
+          <div className="overlay">
+            <l-ring
+              size="50"
+              stroke="5"
+              bg-opacity="0"
+              speed="2"
+              color="white"></l-ring >
+          </div>
+        )
+      }
       <img src={back_default_profile} className='h-full w-full fixed top-0 left-0 -z-[180] bg_filter' alt="" />
       {
         roomMsg.type === 'Success' ? <div className='py-2 px-4 bg-green-500 text-green-50 rounded-md absolute z-[180] top-[2rem] left-1/2 -translate-x-1/2 -translate-y-1/2 capitalize text-center'>{roomMsg.message}</div> :
@@ -607,29 +614,7 @@ const Profile = () => {
         </div>
       </div>
       <div className='w-2/4 bg-white border-2 border-zinc-200 rounded-lg p-6 pb-8'>
-        <div className="col-span-full">
-          <label htmlFor="cover-photo" className="block text-sm font-medium leading-2 text-gray-900">
-            Fee receipt
-          </label>
-          <div className="mt-2 flex flex-col items-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-            <div className="text-center pb-6">
-              <FaImage className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
-              <div className="mt-2 flex text-sm leading-6 text-gray-600">
-                <label
-                  htmlFor="file-upload"
-                  className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                >
-                  <span>Choose a file</span>
-                  <input id="file-upload" name="file-upload" onChange={handleReceipt} type="file" className="sr-only" />
-                </label>
-                <p className="pl-1">or drag and drop</p>
-              </div>
-              <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 2MB</p>
-            </div>
-            <button className='py-[0.30rem] px-4 rounded-md bg-zinc-700 text-white text-[0.8rem]' onClick={handleUpload}>Upload Now</button>
-          </div>
-        </div>
-        <div className='w-full mt-4'>
+        <div className='w-full'>
           <label className='block text-sm font-medium leading-2 text-gray-900'>Apply</label>
           <div className='w-full flex gap-4 justify-center mt-2'>
             <div className='w-1/2 h-[9rem] cursor-pointer rounded-md flex items-center gap-2 border-2 border-zinc-200 px-4' onClick={handleHostelClick}>
@@ -653,6 +638,29 @@ const Profile = () => {
             </div>
           </div>
         </div>
+        <div className="col-span-full mt-4">
+          <label htmlFor="cover-photo" className="block text-sm font-medium leading-2 text-gray-900">
+            Fee receipt
+          </label>
+          <div className="mt-2 flex flex-col items-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+            <div className="text-center pb-6">
+              <FaImage className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
+              <div className="mt-2 flex text-sm leading-6 text-gray-600">
+                <label
+                  htmlFor="file-upload"
+                  className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                >
+                  <span>Choose a file</span>
+                  <input id="file-upload" name="file-upload" onChange={handleReceipt} type="file" className="sr-only" />
+                </label>
+                <p className="pl-1">or drag and drop</p>
+              </div>
+              <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 2MB</p>
+            </div>
+            <button className='py-[0.30rem] px-4 rounded-md bg-zinc-700 text-white text-[0.8rem]' onClick={handleUpload}>Upload Now</button>
+          </div>
+        </div>
+        
       </div>
     </div>
   )

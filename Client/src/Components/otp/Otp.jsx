@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import './Otp.css'
 
 const Otp = () => {
     const { id } = useParams()
@@ -13,6 +14,8 @@ const Otp = () => {
         status:'',
         message:''
     })
+
+    const [loading, setLoading] = useState(false)
 
 
     useEffect(() => {
@@ -48,6 +51,7 @@ const Otp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true)
 
         try {
             const response = await fetch(`http://localhost:5000/api/form/${id}/otp-verification`, {
@@ -91,6 +95,9 @@ const Otp = () => {
         } catch (error) {
             console.log("error on login, ", error)
         }
+        finally{
+            setLoading(false)
+        }
     }
 
     const handleInput = (e) => {
@@ -105,6 +112,7 @@ const Otp = () => {
     }
 
     const handleReset = async () => {
+        setLoading(true)
         try {
             const response = await fetch(`http://localhost:5000/api/form/${id}/resend-otp`,{
                 method:'POST'
@@ -132,11 +140,26 @@ const Otp = () => {
         } catch (error) {
             console.log("error on login, ", error)
         }
+        finally{
+            setLoading(false)
+        }
     }
 
 
     return (
         <div className='w-full min-h-screen flex flex-col justify-center item-center pt-8 bg-[#0a0b19] form relative'>
+            {
+                loading && (
+                    <div className="overlay">
+                        <l-ring
+                            size="50"
+                            stroke="5"
+                            bg-opacity="0"
+                            speed="2"
+                            color="white"></l-ring >
+                    </div>
+                )
+            }
             {
                 msg.status === 'verified' ? <div className='py-2 px-2 bg-green-500 text-green-50 rounded-md absolute z-[180] top-[4rem] left-1/2 -translate-x-1/2 -translate-y-1/2 capitalize text-center'>{msg.message}</div> : msg.status === 'failed' ? <div className='py-2 px-2 text-center bg-red-500 text-red-50 rounded-md absolute z-[180] top-[4rem] left-1/2 -translate-x-1/2 -translate-y-1/2 capitalize'>{msg.message}</div> : <></>
             }

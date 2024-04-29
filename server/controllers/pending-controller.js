@@ -1,4 +1,4 @@
-const { response } = require("express");
+// const { response } = require("express");
 const { uploadFile } = require("../middleware/cloudinary.middleware");
 const AddModel = require("../models/addSchema"); // DB model, storing the details of the students
 const Room = require("../models/pendingBookingSchema");
@@ -25,10 +25,11 @@ const pendingController = async (req, res) => {
           registrationNumber,
           userName: `${isUserExist.firstName} ${isUserExist.lastName}`,
           userEmail: isUserExist.email,
-          userType,
+          userType: 'Room Booking',
           floorNumber,
           hostelName,
           roomNumber,
+          college: isUserExist.college
         });
         return res.status(201).json({
           status: "Pending!!!",

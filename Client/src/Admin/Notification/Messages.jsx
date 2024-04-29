@@ -5,9 +5,11 @@ import { MdCancel } from "react-icons/md";
 import { MdEmail } from "react-icons/md";
 import message_illustration from '../../assets/illustration/message.svg'
 import not_found from '../../assets/illustration/not_found.svg'
+import { useNavigate } from 'react-router-dom';
 
 const Messages = () => {
 
+  const navigate = useNavigate()
   const [message, setMessage] = useState([]);
   const [click, setClick] = useState(false)
   const [user, setUser] = useState({
@@ -37,6 +39,7 @@ const Messages = () => {
 
   const [receiptURL, setReceiptURL] = useState(null)
   const [isZoom, setIsZoom] = useState(false)
+  const [loading, setLoading] = useState(false)
 
 
   const getMessage = async () => {
@@ -67,8 +70,21 @@ const Messages = () => {
 
 
   useEffect(() => {
-    getMessage()
-    getGatePass()
+    setLoading(true)
+    const callFunction = async() => {
+      try {
+        await getMessage();
+        await getGatePass();
+        
+      } catch (error) {
+        console.log(('Function not called!!!', error))
+      }
+      finally{
+        setLoading(false)
+      }
+    }
+
+    callFunction()
 
   }, [])
 
@@ -111,6 +127,7 @@ const Messages = () => {
   }
 
   const sendConfirmation = async () => {
+    setLoading(true)
     try {
       const response = await fetch(`http://localhost:5000/api/admin/booking-confirmation/${user.registrationNumber}`, {
         method: 'POST',
@@ -122,11 +139,15 @@ const Messages = () => {
     } catch (error) {
       console.log("Error found!!!", error)
     }
+    finally{
+      setLoading(false)
+    }
 
     setClick(false)
   }
 
   const handleCancellation = async () => {
+    setLoading(true)
     try {
       const response = await fetch(`http://localhost:5000/api/admin/cancel-booking/${user.registrationNumber}`, {
         method: 'POST'
@@ -136,6 +157,9 @@ const Messages = () => {
       console.log(result)
     } catch (error) {
       console.log("error: ", error)
+    }
+    finally{
+      setLoading(false)
     }
     setClick(false)
   }
@@ -156,6 +180,7 @@ const Messages = () => {
 
 
   const handleAllow = async () => {
+    setLoading(true)
     try {
       const response = await fetch(`http://localhost:5000/api/admin/gate-pass-confirmation/${passUser.registrationNumber}`, {
         method: 'POST'
@@ -169,6 +194,9 @@ const Messages = () => {
     } catch (error) {
       console.log("error to confirm gate pass", error)
     }
+    finally{
+      setLoading(false)
+    }
   }
 
   const handleNotAllow = async () => {
@@ -178,9 +206,9 @@ const Messages = () => {
   const renderMessageItems = (items, handleClickFn) => {
     return items.map((item, index) => (
       <div className='w-full flex text-zinc-500 cursor-pointer inbox rounded-md py-2 bor' key={index + 1} onClick={() => handleClickFn(index)}>
-        <div className='w-1/5 h-8 flex items-center pl-4 font-medium '>{item.userName}</div>
-        <div className='w-1/5 h-8 flex items-center pl-4'>{item.userType || 'Room Booking'}</div>
-        <div className='w-3/5 h-8 flex items-center pl-4'>{item.userType ? `Gate Pass Pending!!! of room no. ${item.roomNumber} in ${item.hostelName}` : `Booking Pending!!! of Room no. ${item.roomNumber} on ${item.floorNumber} floor in ${item.hostelName}`}</div>
+        <div className='w-1/5 h-8 flex items-center pl-4 font-medium justify-center'>{item.userName}</div>
+        <div className='w-1/5 h-8 flex items-center pl-4 justify-center'>{item.userType || 'Room Booking'}</div>
+        <div className='w-3/5 h-8 flex items-center pl-4 justify-center'>{item.userType} Request Pending!!! of Room no. {item.roomNumber} in <span className='capitalize mx-1 mt-1 font-semibold'>{item.hostelName}</span>.</div>
       </div>
     ));
   };
@@ -191,6 +219,18 @@ const Messages = () => {
       <div className='w-4/5 min-h-screen p-8 relative'>
         <h1 className='text-2xl text-center font-semibold mb-6'>Inbox</h1>
         <div className='w-full border-t-2 border-zinc-200 py-4'>
+          {
+            loading && (
+              <div className="overlay">
+                <l-ring
+                  size="50"
+                  stroke="5"
+                  bg-opacity="0"
+                  speed="2"
+                  color="white"></l-ring >
+              </div>
+            )
+          }
           {
             click && user.userName ? <div className='w-[45vw] min-h-[60vh] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white shadow-2xl shadow-black rounded-md p-4'>
               <MdCancel className='absolute text-[2rem] cursor-pointer text-zinc-600 -top-4 -right-4 bg-white rounded-full' onClick={handleCancel} />
@@ -256,15 +296,15 @@ const Messages = () => {
             </div> : <></>
           }
           <div className='w-full'>
-            <div className='w-full flex pt-1'>
-              <div className='w-1/5 h-10  flex items-center pl-4'>
-                <h1 className='font-bold text-gray-900'>From</h1>
+            <div className='w-full flex pt-1 bg-zinc-700 rounded'>
+              <div className='w-1/5 h-10  flex items-center justify-center pl-4'>
+                <h1 className='font-bold text-white'>From</h1>
               </div>
-              <div className='w-1/5 h-10 flex items-center pl-4 '>
-                <h1 className='font-bold text-gray-900'>Type</h1>
+              <div className='w-1/5 h-10 flex items-center  justify-center pl-4 '>
+                <h1 className='font-bold text-white'>Type</h1>
               </div>
-              <div className='w-3/5 h-10  flex items-center pl-4'>
-                <h1 className='font-bold text-gray-900'>Message</h1>
+              <div className='w-3/5 h-10  flex items-center justify-center pl-4'>
+                <h1 className='font-bold text-white'>Message</h1>
               </div>
             </div>
             {(message.length > 0 || gatePassMessage.length > 0) ? (

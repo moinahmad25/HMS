@@ -12,6 +12,7 @@ const Form = () => {
   const [regError, setRegError] = useState('')
   const [btnNext, setBtnNext] = useState(false)
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
 
   const { storeTokenToLocal } = useAuth()
   // const { storeEmailToLocal } = useAuth()
@@ -51,6 +52,7 @@ const Form = () => {
 
 
     // post operation to verify with DB
+    setLoading(true)
     try {
       const response = await fetch(`http://localhost:5000/api/form/login`, {
         method: "POST",
@@ -73,6 +75,9 @@ const Form = () => {
     } catch (error) {
       console.log("error on login, ", error)
     }
+    finally{
+      setLoading(false)
+    }
   }
 
   const getDetail = () => {
@@ -81,6 +86,18 @@ const Form = () => {
 
   return (
     <div className='w-full min-h-screen flex flex-col justify-center item-center pt-8 bg-[#0a0b19] form'>
+      {
+        loading && (
+          <div className="overlay">
+            <l-ring
+              size="50"
+              stroke="5"
+              bg-opacity="0"
+              speed="2"
+              color="white"></l-ring >
+          </div>
+        )
+      }
       <div className="w-[30vw] h-[40vh] flex flex-col justify-center items-center mx-auto my-4 p-4 ">
         <h1 className='text-2xl font-bold mb-4'>Registration Verification</h1>
         <form onSubmit={handleSubmit} className="w-full flex flex-col items-center gap-4">

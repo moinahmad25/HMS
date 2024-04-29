@@ -83,9 +83,36 @@ const getRoomDetail = async (req, res) => {
     
 }
 
+const getStudentDetails = async (req, res) => {
+  try {
+    let studentData = await Room.find({}); // Wait for the query to complete
+
+    // getting page details
+    let page = Number(req.query.page) || 1;
+    let limit = Number(req.query.limit) || 5;
+
+    let skip = (page - 1) * limit; // Define skip after page and limit are defined
+
+    const students = await Room.find({}).skip(skip).limit(limit); // Apply pagination directly to the fetched data
+
+    res.status(200).json({ students });
+  } catch (error) {
+    res
+      .status(400)
+      .json({
+        status: "failed",
+        message: "data not get",
+        error: error.message,
+      });
+  }
+};
+
+
+
 module.exports = {
   register,
   updateDetail,
   deleteDetail,
   getRoomDetail,
+  getStudentDetails,
 };

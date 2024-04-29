@@ -37,6 +37,10 @@ const pendingBooking = new Schema({
     imgURL: {
         type: String,
         default: ''
+    }, 
+    college: {
+        type: String,
+        required: true,
     }
 })
 

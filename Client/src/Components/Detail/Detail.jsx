@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
+import './Detail.css'
+// import { ring } from 'ldrs'
 
 const Detail = () => {
 
@@ -14,6 +16,8 @@ const Detail = () => {
         }
     )
     const [btnNext, setBtnNext] = useState(false)
+    const [loading, setLoading] = useState(false);
+
 
     const {id} = useParams()
     const navigate = useNavigate()
@@ -48,6 +52,7 @@ const Detail = () => {
 
 
     const handleClick =async () => {
+        setLoading(true)
         try {
             const response = await fetch(`http://localhost:5000/api/form/${id}/generate-otp`, {
                 method: "POST"
@@ -61,11 +66,26 @@ const Detail = () => {
         } catch (error) {
             console.log("error on login, ", error)
         }
+        finally{
+            setLoading(false)
+        }
     }
 
     return (
         <div>
             <div className='w-full min-h-screen flex flex-col justify-center item-center pt-8 bg-[#0a0b19] form'>
+                {
+                    loading && (
+                        <div className="overlay">
+                            <l-ring
+                                size="50"
+                                stroke="5"
+                                bg-opacity="0"
+                                speed="2"
+                                color="white"></l-ring >
+                        </div>
+                    )
+                }
                 <div className="w-[30vw] min-h-[40vh] mx-auto my-4 p-4 flex items-center flex-col">
                     <h1 className='text-2xl font-bold mb-4'>Personal Detail Content</h1>
                     <form className='w-full' onSubmit={handleDetail}>
