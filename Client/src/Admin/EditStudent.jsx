@@ -17,6 +17,7 @@ const EditStudent = (props) => {
 
     const { setIsClicked } = useAuth()
     const { isClicked } = useAuth()
+    const [loading, setLoading] = useState(false)
 
 
     console.log(isClicked)
@@ -36,6 +37,7 @@ const EditStudent = (props) => {
     }
 
     const handleUpdate = async() => {
+        setLoading(true)
         try {
             const response = await fetch(`http://localhost:5000/api/admin/update-detail/${props.regNumber}`, {
                 method: 'PATCH',
@@ -55,6 +57,9 @@ const EditStudent = (props) => {
         } catch (error) {
             console.log("Error!!! Something mistaken in code!!!", error)
         }
+        finally{
+            setLoading(false)
+        }
     }
 
 
@@ -62,6 +67,18 @@ const EditStudent = (props) => {
 
     return (
         <>
+            {
+                loading && (
+                    <div className="overlay">
+                        <l-ring
+                            size="50"
+                            stroke="5"
+                            bg-opacity="0"
+                            speed="2"
+                            color="white"></l-ring >
+                    </div>
+                )
+            }
             {
                 isClicked ?
                     <div className='w-[40rem] h-[70vh] bg-white border-2 border-gray-300 shadow-2xl rounded-md absolute top-[20%] left-1/2 -translate-x-1/2 p-6 overflow-y-scroll scroller'>

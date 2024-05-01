@@ -30,7 +30,7 @@ const Otp = () => {
                 let protectedEmail = "";
 
                 for (let i = 0; i < email.length; i++) {
-                    if (i >= 4 && i <= 10) {
+                    if (i >= 4 && i <= 8) {
                         protectedEmail += '*';
                     } else {
                         protectedEmail += email[i];

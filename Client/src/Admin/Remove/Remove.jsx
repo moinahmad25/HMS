@@ -12,6 +12,7 @@ const Remove = () => {
   const [room, setRoom] = useState(null)
   const [clicked, setClicked] = useState(false)
   const { isClicked } = useAuth()
+  const [loading, setLoading] = useState(false)
 
 
 
@@ -23,6 +24,7 @@ const Remove = () => {
   // console.log(regNumber)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
 
     try {
       const response = await fetch(`http://localhost:5000/api/admin/get-detail/${regNumber}`)
@@ -34,6 +36,9 @@ const Remove = () => {
 
     } catch (error) {
       console.log("getting error: ", error)
+    }
+    finally{
+      setLoading(false)
     }
   }
 
@@ -52,6 +57,18 @@ const Remove = () => {
           </form>
         </div>
         <div className='w-full p-4'>
+          {
+            loading && (
+              <div className="overlay">
+                <l-ring
+                  size="50"
+                  stroke="5"
+                  bg-opacity="0"
+                  speed="2"
+                  color="white"></l-ring >
+              </div>
+            )
+          }
           {
             clicked && detail.firstName ? <div className='w-full p-4'>
               <StudentCard fname={detail.firstName} lname={detail.lastName} college={detail.college} email={detail.email} phone={detail.phone} regNumber={detail.registrationNumber} permanentAddress={detail.permanentAddress} type='delete' hostelName={room.hostelName} roomNumber={room.roomNumber} />

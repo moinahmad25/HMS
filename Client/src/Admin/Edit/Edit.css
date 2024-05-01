@@ -1,11 +1,6 @@
-/* Add this to your CSS file */
-.blur-effect1 {
-    filter: blur(4px);
-    pointer-events: none;
-    user-select: none;
-}
-
 .overlay {
+    width: full;
+    height: full;
     position: fixed;
     top: 0;
     left: 0;

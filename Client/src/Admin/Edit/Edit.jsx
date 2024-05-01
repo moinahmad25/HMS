@@ -5,6 +5,7 @@ import { IoSearch } from "react-icons/io5";
 import { useAuth } from '../../store/auth';
 // import EditStudent from '../EditStudent';
 import edit_illustration from '../../assets/illustration/edit.svg'
+import './Edit.css'
 
 const Edit = () => {
   const [regNumber, setRegNumber] = useState(null)
@@ -12,6 +13,7 @@ const Edit = () => {
   const [room, setRoom] = useState(null)
   const [clicked, setClicked] = useState(false)
   const {isClicked} = useAuth()
+  const [loading, setLoading] = useState(false)
 
 
 
@@ -23,6 +25,7 @@ const Edit = () => {
   // console.log(regNumber)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
 
     try {
       const response = await fetch(`http://localhost:5000/api/admin/get-detail/${regNumber}`)
@@ -34,6 +37,9 @@ const Edit = () => {
 
     } catch (error) {
       console.log("getting error: ", error)
+    }
+    finally{
+      setLoading(false)
     }
   }
 
@@ -57,6 +63,18 @@ const Edit = () => {
           </form>
         </div>
         <div className='w-full relative'>
+          {
+            loading && (
+              <div className="overlay">
+                <l-ring
+                  size="50"
+                  stroke="5"
+                  bg-opacity="0"
+                  speed="2"
+                  color="white"></l-ring >
+              </div>
+            )
+          }
           {
             clicked && detail.firstName ? <div className='w-full p-4'>
               <StudentCard fname={detail.firstName} lname={detail.lastName} college={detail.college} email={detail.email} phone={detail.phone} regNumber={detail.registrationNumber} permanentAddress={detail.permanentAddress} type='edit' hostelName={room ? room.hostelName : 'Unknown'} roomNumber={room ? room.roomNumber : 'Not Booked!'} />

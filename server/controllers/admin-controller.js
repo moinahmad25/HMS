@@ -85,6 +85,8 @@ const getRoomDetail = async (req, res) => {
 
 const getStudentDetails = async (req, res) => {
   try {
+    let allocatedCount = 0;
+    let nonAllocatedCount = 0;
     let studentData = await Room.find({}); // Wait for the query to complete
 
     // getting page details
@@ -95,7 +97,23 @@ const getStudentDetails = async (req, res) => {
 
     const students = await Room.find({}).skip(skip).limit(limit); // Apply pagination directly to the fetched data
 
-    res.status(200).json({ students });
+    studentData.map((item) => {
+        if(item.isAllocated){
+            allocatedCount++;
+        }
+        else{
+            nonAllocatedCount++;
+        }
+    })
+
+    res
+      .status(200)
+      .json({
+        students,
+        length: studentData,
+        count: allocatedCount,
+        nonAllocated: nonAllocatedCount,
+      });
   } catch (error) {
     res
       .status(400)
