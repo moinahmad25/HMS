@@ -46,5 +46,6 @@ studentRouter.get(
 );
 
 studentRouter.route("/apply-gate-pass/:registrationNumber").post(applyGatePass);
+// studentRouter.route("/log-out/:registrationNumber").post(applyGatePass);
 
 module.exports = studentRouter;

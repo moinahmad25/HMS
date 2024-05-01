@@ -28,12 +28,11 @@ const Hero = () => {
             <img src={logo} alt="" className=' z-10 h-full' />
           </div>
           <nav className=' w-[50%] h-full flex items-center'>
-            <ul className='list w-full h-[80%] flex justify-end items-center gap-4 font-bold px-[1rem]'>
+            <ul className='list w-full h-[80%] flex justify-end items-center gap-6 font-bold px-[1rem] mr-4'>
               <Link href=""><li>Home</li></Link>
               <Link href=""><li>About Us</li></Link>
               <Link href=""><li>Features</li></Link>
               <Link href=""><li>Contact Us</li></Link>
-              <Link href=""><li>Join Now</li></Link>
             </ul>
           </nav>
         </header>

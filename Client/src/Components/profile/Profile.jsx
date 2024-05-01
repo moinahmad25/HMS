@@ -15,12 +15,10 @@ import card_bg from '../../assets/card_bg.jpg'
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
-import dayjs from 'dayjs';
+import { FaSquarePhone } from "react-icons/fa6";
+import { MdEmail } from "react-icons/md";
+import { GiFamilyHouse } from "react-icons/gi";
+import { MdBedroomParent } from "react-icons/md";
 
 
 const Profile = () => {
@@ -64,7 +62,7 @@ const Profile = () => {
 
   const [gatePass, setGatePass] = useState({
     date: '',
-    purpose:''
+    purpose: ''
   })
 
   const fileRef = useRef()
@@ -83,8 +81,8 @@ const Profile = () => {
 
   // handling date
   const handleGate = (e) => {
-    const {name, value} = e.target;
-    setGatePass((old) => ({...old, [name]: value}))
+    const { name, value } = e.target;
+    setGatePass((old) => ({ ...old, [name]: value }))
     console.log(e.target.name)
   }
 
@@ -127,9 +125,9 @@ const Profile = () => {
           })
         }
       } catch (error) {
-        
+
       }
-      
+
     }
 
     const confirmedRooms = async () => {
@@ -266,7 +264,7 @@ const Profile = () => {
       console.log("error", error)
       // clg(error.message)
     }
-    finally{
+    finally {
       setLoading(false)
     }
   }
@@ -345,7 +343,7 @@ const Profile = () => {
     } catch (error) {
       console.error('Error uploading image:', error);
     }
-    finally{
+    finally {
       setLoading(false)
     }
   }
@@ -364,38 +362,42 @@ const Profile = () => {
           body: JSON.stringify(gatePass)
         });
 
-        const result = await response.json();
-        if(response.ok){
+      const result = await response.json();
+      if (response.ok) {
+        setRoomMsg({
+          type: 'Success',
+          message: `Created!!! ${result.message}`
+        })
+        setTimeout(() => {
+          setRoomMsg('')
+        }, 3000)
+      }
+      else {
+        setRoomMsg({
+          type: 'Failed',
+          message: `Failed!!! ${result.message}`
+        })
+        setTimeout(() => {
           setRoomMsg({
-            type: 'Success',
-            message: `Created!!! ${result.message}`
+            type: '',
+            message: ''
           })
-          setTimeout(() => {
-            setRoomMsg('')
-          }, 3000)
-        }
-        else {
-          setRoomMsg({
-            type: 'Failed',
-            message: `Failed!!! ${result.message}`
-          })
-          setTimeout(() => {
-            setRoomMsg({
-              type: '',
-              message: ''
-            })
-          }, 3000)
-        }
-        console.log(result)
+        }, 3000)
+      }
+      console.log(result)
 
-        setIsPassBtnClicked(false)
+      setIsPassBtnClicked(false)
 
     } catch (error) {
       console.log("error found in gate pass", error)
     }
-    finally{
+    finally {
       setLoading(false)
     }
+  }
+
+  const handleLogout = () => {
+    navigate('/')
   }
 
 
@@ -590,7 +592,7 @@ const Profile = () => {
 
         </div>
         <div className='w-full h-[82.75vh] rounded-lg absolute top-[3.5rem] left-0 flex flex-col gap-4 items-center  z-50'>
-          <div className="w-[8rem] relative h-[8rem] rounded-full bg-white flex justify-center items-center">
+          <div className="w-[9rem] relative h-[9rem]  top-[2rem] rounded-full bg-white flex justify-center items-center">
             <form onSubmit={handleSubmit}>
               <label htmlFor='selectFile' onClick={onFileInput} className='w-[3rem] h-[3rem] rounded-full bg-white flex justify-center items-center absolute bottom-2 -right-4 cursor-pointer'>
                 <FaCirclePlus style={{ color: 'grey', fontSize: '2.4rem' }} />
@@ -598,20 +600,28 @@ const Profile = () => {
               </label>
             </form>
             {
-              img ? <div className='w-[7rem] h-[7rem] rounded-full overflow-hidden flex justify-center items-center'>
+              img ? <div className='w-[8.1rem] h-[8.1rem] rounded-full overflow-hidden flex justify-center items-center'>
                 <img src={img} alt={`selected`} />
-              </div> : <div className='w-[7rem] h-[7rem] rounded-full overflow-hidden flex justify-center items-center'>
+              </div> : <div className='w-[8.1rem] h-[8.1rem] rounded-full overflow-hidden flex justify-center items-center'>
                 <img src={default_profile} alt={`selected`} className='h-full w-full object-cover' />
               </div>
             }
-
-
           </div>
-          <div className='w-full px-4'>
-            <h1 className='text-[1.4rem] font-semibold text-white text-center'>{user.firstName} {user.lastName}</h1>
-            <p className='text-white text-center uppercase'>{user.college}</p>
+          <div className='absolute w-full h-[20rem] bottom-0 pt-8 p-6'>
+            <h1 className='text-[1.6rem] font-semibold text-black text-center'>{user.firstName} {user.lastName}</h1>
+            <p className='text-zinc-500 text-center uppercase text-[0.8rem] -mt-2'>({user.college})</p>
+            <div className='w-full pt-4'>
+              <p className='flex gap-1 py-1 items-center text-zinc-700 font-medium'><FaSquarePhone className='text-[1.4rem] text-zinc-600' /> {user.phone}</p>
+              <p className='flex gap-1 py-1 items-center text-zinc-700 font-medium'><MdEmail className='text-[1.4rem] text-zinc-600' /> {user.email}</p>
+              <p className='flex gap-1 py-1 items-center text-zinc-700 font-medium capitalize'><GiFamilyHouse className='text-[1.4rem] text-zinc-600' /> {roomDetail.hostelName ? (roomDetail.hostelName) : 'Not Allocated Yet!'}</p>
+              <p className='flex gap-1 py-1 items-center text-zinc-700 font-medium capitalize'><MdBedroomParent className='text-[1.4rem] text-zinc-600' /> {roomDetail.roomNumber ? (roomDetail.roomNumber) : 'Not Allocated Yet!'}</p>
+            </div>
+            <div className='w-full flex justify-center mt-2'>
+              <button className='border-2 border-red-600 text-red-600 font-semibold transition-all hover:bg-red-600 hover:text-red-50 rounded-md py-2 px-4' onClick={handleLogout}>Log out</button>
+            </div>
           </div>
         </div>
+        {/* <p>Hello</p> */}
       </div>
       <div className='w-2/4 bg-white border-2 border-zinc-200 rounded-lg p-6 pb-8'>
         <div className='w-full'>
@@ -660,7 +670,7 @@ const Profile = () => {
             <button className='py-[0.30rem] px-4 rounded-md bg-zinc-700 text-white text-[0.8rem]' onClick={handleUpload}>Upload Now</button>
           </div>
         </div>
-        
+
       </div>
     </div>
   )
